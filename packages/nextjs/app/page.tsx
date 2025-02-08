@@ -1,65 +1,70 @@
 "use client";
 
-import Link from "next/link";
-import type { NextPage } from "next";
+import { useState } from "react";
 import { useAccount } from "wagmi";
-import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Address } from "~~/components/scaffold-eth";
 
-const Home: NextPage = () => {
+const Home = () => {
   const { address: connectedAddress } = useAccount();
+  const [messages, setMessages] = useState<{ user: string; text: string }[]>([]);
+  const [inputText, setInputText] = useState("");
+
+  const handleSendMessage = () => {
+    if (inputText.trim() === "") return;
+
+    // Add user message to chat
+    setMessages(prev => [...prev, { user: "You", text: inputText }]);
+
+    // Simulate LLM response (replace with API call later)
+    const llmResponse = `PayPer Move: Sure, but it'll cost you 0.01 ETH. What, you thought robots work for free? Pay up, and I'll make it happen. 💸🤖`;
+    setTimeout(() => {
+      setMessages(prev => [...prev, { user: "PayPer Move", text: llmResponse }]);
+    }, 1000);
+
+    // Clear input
+    setInputText("");
+  };
 
   return (
     <>
-      <div className="flex items-center flex-col flex-grow pt-10">
-        <div className="px-5">
+      <div className="flex items-center flex-col flex-grow">
+        {/* <div className="px-5">
           <h1 className="text-center">
             <span className="block text-2xl mb-2">Welcome to</span>
-            <span className="block text-4xl font-bold">Scaffold-ETH 2</span>
+            <span className="block text-4xl font-bold">PayPer Move</span>
           </h1>
           <div className="flex justify-center items-center space-x-2 flex-col sm:flex-row">
             <p className="my-2 font-medium">Connected Address:</p>
             <Address address={connectedAddress} />
           </div>
-          <p className="text-center text-lg">
-            Get started by editing{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              packages/nextjs/app/page.tsx
-            </code>
-          </p>
-          <p className="text-center text-lg">
-            Edit your smart contract{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              YourContract.sol
-            </code>{" "}
-            in{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              packages/hardhat/contracts
-            </code>
-          </p>
-        </div>
+        </div> */}
 
-        <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12">
-          <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <BugAntIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Tinker with your smart contract using the{" "}
-                <Link href="/debug" passHref className="link">
-                  Debug Contracts
-                </Link>{" "}
-                tab.
-              </p>
+        {/* Chat Interface */}
+        <div className="flex-grow bg-base-300 w-full mt-2 px-1 py-5">
+          <div className="max-w-2xl mx-auto ">
+            {/* Chat Messages */}
+            <div className="bg-base-100 rounded-lg p-6 h-[400px] overflow-y-auto mb-4 ">
+              {messages.map((msg, index) => (
+                <div key={index} className={`mb-4 ${msg.user === "You" ? "text-right" : "text-left"}`}>
+                  <span className="font-bold text-secondary">{msg.user}:</span>{" "}
+                  <p className="mt-1 bg-base-200 p-2 rounded-lg inline-block">{msg.text}</p>
+                </div>
+              ))}
             </div>
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <MagnifyingGlassIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Explore your local transactions with the{" "}
-                <Link href="/blockexplorer" passHref className="link">
-                  Block Explorer
-                </Link>{" "}
-                tab.
-              </p>
+
+            {/* Input Box */}
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Type your message..."
+                className="input input-bordered w-full"
+                value={inputText}
+                onChange={e => setInputText(e.target.value)}
+                onKeyPress={e => e.key === "Enter" && handleSendMessage()}
+              />
+              <button className="btn btn-primary" onClick={handleSendMessage}>
+                Send
+              </button>
             </div>
           </div>
         </div>
