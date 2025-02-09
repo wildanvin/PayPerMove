@@ -1,6 +1,7 @@
 # dependencies
 node_modules
 
+/packages/python/venv
 # yarn
 .yarn/*
 !.yarn/patches
